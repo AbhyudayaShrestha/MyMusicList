@@ -129,17 +129,7 @@ public class Login extends javax.swing.JFrame {
 
         jTabbedPane4.addTab("Search", jPanel4);
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1109, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 480, Short.MAX_VALUE)
-        );
-
+        jPanel6.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jTabbedPane4.addTab("Dashboard", jPanel6);
 
         jPanel10.setBackground(new java.awt.Color(51, 51, 51));
