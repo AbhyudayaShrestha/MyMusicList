@@ -12,22 +12,22 @@ package Model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class SongPlaylist {
-private LinkedList<Song> playlist;    
+public class PlaylistModel {
+private LinkedList<SongModel> playlist;    
     
     
-    public SongPlaylist() {
+    public PlaylistModel() {
     this.playlist = new LinkedList<>();
     }
     
     // Add song at the end (for playlist building)
    // Add song at the end (for playlist building)
-public void addSong(Song song) {
+public void addSong(SongModel song) {
     playlist.add(song);
 }
 
 // Insert at specific position
-public boolean insertAt(int position, Song song) {
+public boolean insertAt(int position, SongModel song) {
     if (position < 0 || position > playlist.size()) {
         return false;
     }
@@ -45,7 +45,7 @@ public boolean deleteAt(int position) {
 }
 
 // Get song at position
-public Song getSongAt(int position) {
+public SongModel getSongAt(int position) {
     if (position < 0 || position >= playlist.size()) {
         return null;
     }
@@ -53,7 +53,7 @@ public Song getSongAt(int position) {
 }
 
 // Convert to ArrayList for display
-public ArrayList<Song> toArrayList() {
+public ArrayList<SongModel> toArrayList() {
     return new ArrayList<>(playlist);
 }
 

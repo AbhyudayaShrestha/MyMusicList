@@ -10,15 +10,15 @@ import java.util.ArrayList;
  *
  * @author Abhyudaya Shrestha
  */
-public class SongQueue {
+public class QueueModel {
     private final int SIZE = 10;  // Maximum queue size
-    private Song[] queue;
+    private SongModel[] queue;
     private int front;
     private int rear;
-    private Song currentlyPlaying;
+    private SongModel currentlyPlaying;
     
-    public SongQueue() {
-        this.queue = new Song[SIZE];
+    public QueueModel() {
+        this.queue = new SongModel[SIZE];
         this.front = -1;
         this.rear = -1;
         this.currentlyPlaying = null;
@@ -28,7 +28,7 @@ public class SongQueue {
      * Add song to the end of queue
      * Returns true if successful, false if queue is full
      */
-    public boolean addToQueue(Song song) {
+    public boolean addToQueue(SongModel song) {
         if (rear == SIZE - 1) {
             return false;  // Queue is full
         } else {
@@ -58,7 +58,7 @@ public class SongQueue {
     /**
      * Get currently playing song
      */
-    public Song getCurrentlyPlaying() {
+    public SongModel getCurrentlyPlaying() {
         return currentlyPlaying;
     }
     
@@ -66,7 +66,7 @@ public class SongQueue {
      * Play next song - removes current song and plays next in queue
      * Returns the next song, or null if queue is empty
      */
-    public Song playNext() {
+    public SongModel playNext() {
         if (front > rear || front == -1) {
             // Queue is empty
             currentlyPlaying = null;
@@ -83,7 +83,7 @@ public class SongQueue {
     /**
      * Peek at next song without removing it
      */
-    public Song peekNext() {
+    public SongModel peekNext() {
         if (front == -1 || front > rear) {
             return null;
         }
@@ -93,8 +93,8 @@ public class SongQueue {
     /**
      * Get all songs in queue as ArrayList for display
      */
-    public ArrayList<Song> getQueueAsList() {
-        ArrayList<Song> list = new ArrayList<>();
+    public ArrayList<SongModel> getQueueAsList() {
+        ArrayList<SongModel> list = new ArrayList<>();
         
         if (front == -1 || front > rear) {
             return list;  // Empty list
@@ -129,7 +129,7 @@ public class SongQueue {
      * Clear the entire queue
      */
     public void clear() {
-        queue = new Song[SIZE];
+        queue = new SongModel[SIZE];
         front = -1;
         rear = -1;
         currentlyPlaying = null;
@@ -137,8 +137,8 @@ public class SongQueue {
     /**
  * Get all songs in queue as ArrayList for display
  */
-public ArrayList<Song> getAllSongs() {
-    ArrayList<Song> list = new ArrayList<>();
+public ArrayList<SongModel> getAllSongs() {
+    ArrayList<SongModel> list = new ArrayList<>();
     
     if (front == -1 || front > rear) {
         return list;  // Empty list

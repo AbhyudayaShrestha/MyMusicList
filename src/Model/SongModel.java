@@ -8,7 +8,7 @@ package Model;
  *
  * @author Abhyudaya Shrestha
  */
-public class Song{
+public class SongModel{
     
     protected String SongName;
     protected String ArtistName;
@@ -16,7 +16,7 @@ public class Song{
     protected String Album;
     protected int ReleasedYear;
 
-    public Song(String SongName, String ArtistName, String Genre, String Album, int ReleasedYear) {
+    public SongModel(String SongName, String ArtistName, String Genre, String Album, int ReleasedYear) {
         this.SongName = SongName;
         this.ArtistName = ArtistName;
         this.Genre = Genre;

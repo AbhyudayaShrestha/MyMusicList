@@ -10,20 +10,20 @@ import java.util.ArrayList;
  *
  * @author Abhyudaya Shrestha
  */
-public class RecentlyPlayedStack {
+public class StackModel {
         private final int STACK_SIZE = 10;
-    private Song[] stackArray;  // Array-based stack like TabPanes
+    private SongModel[] stackArray;  // Array-based stack like TabPanes
     private int top;            // Stack pointer
     
-    public RecentlyPlayedStack() {
-        this.stackArray = new Song[STACK_SIZE];
+    public StackModel() {
+        this.stackArray = new SongModel[STACK_SIZE];
         this.top = -1;  // Empty stack
     }
     
     /**
      * PUSH operation - Add song to stack (like TabPanes push method)
      */
-    public boolean push(Song song) {
+    public boolean push(SongModel song) {
         if (song == null) return false;
         
         if (isFull()) {
@@ -43,7 +43,7 @@ public class RecentlyPlayedStack {
     /**
      * PEEK operation - View top without removing
      */
-    public Song peek() {
+    public SongModel peek() {
         if (isEmpty()) {
             return null;
         }
@@ -53,11 +53,11 @@ public class RecentlyPlayedStack {
     /**
      * POP operation - Remove and return top song
      */
-    public Song pop() {
+    public SongModel pop() {
         if (isEmpty()) {
             return null;
         }
-        Song song = stackArray[top];
+        SongModel song = stackArray[top];
         stackArray[top] = null;
         top--;
         return song;
@@ -66,8 +66,8 @@ public class RecentlyPlayedStack {
     /**
      * Get all songs in stack (newest first)
      */
-    public ArrayList<Song> getAllSongs() {
-        ArrayList<Song> songs = new ArrayList<>();
+    public ArrayList<SongModel> getAllSongs() {
+        ArrayList<SongModel> songs = new ArrayList<>();
         
         // Start from top (newest) to bottom (oldest)
         for (int i = top; i >= 0; i--) {
@@ -119,7 +119,7 @@ public class RecentlyPlayedStack {
     /**
      * Check if song exists in stack (prevents duplicates)
      */
-    public boolean containsSong(Song song) {
+    public boolean containsSong(SongModel song) {
         for (int i = 0; i <= top; i++) {
             if (stackArray[i] != null && 
                 stackArray[i].getSongName().equals(song.getSongName()) &&
@@ -132,18 +132,18 @@ public class RecentlyPlayedStack {
     
     /**
      * Remove duplicate if exists and push to top
-     * Similar to TabPanes but with Song objects
+Similar to TabPanes but with SongModel objects
      */
-    public boolean addSongNoDuplicates(Song song) {
+    public boolean addSongNoDuplicates(SongModel song) {
         if (song == null) return false;
         
         // Remove duplicate if exists
-        Song[] tempStack = new Song[STACK_SIZE];
+        SongModel[] tempStack = new SongModel[STACK_SIZE];
         int tempTop = -1;
         
         // Copy non-duplicate songs to temp stack
         while (!isEmpty()) {
-            Song current = pop();
+            SongModel current = pop();
             if (!current.getSongName().equals(song.getSongName()) || 
                 !current.getArtistName().equals(song.getArtistName())) {
                 tempTop++;

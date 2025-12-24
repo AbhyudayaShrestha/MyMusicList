@@ -16,11 +16,11 @@ import java.util.HashMap;
  * Model for managing the song library and user playlists
  * @author Abhyudaya Shrestha
  */
-public class SongLibrary {
-    private ArrayList<Song> songLibrary;  // Master song library (admin manages this)
-    private HashMap<String, SongPlaylist> userPlaylists; // Each user's playlist
+public class LibraryModel {
+    private ArrayList<SongModel> songLibrary;  // Master song library (admin manages this)
+    private HashMap<String, PlaylistModel> userPlaylists; // Each user's playlist
     
-    public SongLibrary() {
+    public LibraryModel() {
         songLibrary = new ArrayList<>();
         userPlaylists = new HashMap<>();
     }
@@ -28,19 +28,19 @@ public class SongLibrary {
     // ============ CRUD OPERATIONS FOR SONG LIBRARY ============
     
     // CREATE - Add new song to library
-    public boolean addToLibrary(Song s) {
+    public boolean addToLibrary(SongModel s) {
         if (s == null) return false;
         songLibrary.add(s);
         return true;
     }
     
     // READ - Get all songs from library
-    public ArrayList<Song> getSongLibrary() {
+    public ArrayList<SongModel> getSongLibrary() {
         return songLibrary;
     }
     
     // UPDATE - Update song at index in library
-    public boolean updateLibrarySong(int index, Song updatedSong) {
+    public boolean updateLibrarySong(int index, SongModel updatedSong) {
         if (index < 0 || index >= songLibrary.size() || updatedSong == null) {
             return false;
         }
@@ -53,7 +53,7 @@ public class SongLibrary {
         if (index < 0 || index >= songLibrary.size()) {
             return false;
         }
-        Song deletedSong = songLibrary.get(index);
+        SongModel deletedSong = songLibrary.get(index);
         songLibrary.remove(index);
         
         // Optional: Remove this song from all user playlists
@@ -73,7 +73,7 @@ public class SongLibrary {
     }
     
     // Get song at specific index from library
-    public Song getLibrarySongAt(int index) {
+    public SongModel getLibrarySongAt(int index) {
         if (index >= 0 && index < songLibrary.size()) {
             return songLibrary.get(index);
         }
@@ -93,60 +93,60 @@ public class SongLibrary {
     // ============ PLAYLIST OPERATIONS ============
     
     // Get or create playlist for user
-    public SongPlaylist getUserPlaylist(String username) {
+    public PlaylistModel getUserPlaylist(String username) {
         if (!userPlaylists.containsKey(username)) {
-            userPlaylists.put(username, new SongPlaylist());
+            userPlaylists.put(username, new PlaylistModel());
         }
         return userPlaylists.get(username);
     }
     
     // Add song from library to user's playlist
     public boolean addToUserPlaylist(String username, int songIndex) {
-        Song song = getLibrarySongAt(songIndex);
+        SongModel song = getLibrarySongAt(songIndex);
         if (song == null) return false;
         
-        SongPlaylist playlist = getUserPlaylist(username);
+        PlaylistModel playlist = getUserPlaylist(username);
         playlist.addSong(song);
         return true;
     }
     
     // Add song object to user's playlist
-    public boolean addToUserPlaylist(String username, Song song) {
+    public boolean addToUserPlaylist(String username, SongModel song) {
         if (song == null) return false;
         
-        SongPlaylist playlist = getUserPlaylist(username);
+        PlaylistModel playlist = getUserPlaylist(username);
         playlist.addSong(song);
         return true;
     }
     
     // Remove song from user's playlist at position
     public boolean removeFromUserPlaylist(String username, int position) {
-        SongPlaylist playlist = getUserPlaylist(username);
+        PlaylistModel playlist = getUserPlaylist(username);
         return playlist.deleteAt(position);
     }
     
     // Get user's playlist as ArrayList for display
-    public ArrayList<Song> getUserPlaylistAsList(String username) {
-        SongPlaylist playlist = getUserPlaylist(username);
+    public ArrayList<SongModel> getUserPlaylistAsList(String username) {
+        PlaylistModel playlist = getUserPlaylist(username);
         return playlist.toArrayList();
     }
     
     // Clear user's playlist
     public void clearUserPlaylist(String username) {
-        SongPlaylist playlist = getUserPlaylist(username);
+        PlaylistModel playlist = getUserPlaylist(username);
         playlist.clear();
     }
     
     // Get user playlist size
     public int getUserPlaylistSize(String username) {
-        SongPlaylist playlist = getUserPlaylist(username);
+        PlaylistModel playlist = getUserPlaylist(username);
         return playlist.getSize();
     }
     
     
     // Check if a song exists in library
     public boolean songExistsInLibrary(String songName, String artistName) {
-        for (Song song : songLibrary) {
+        for (SongModel song : songLibrary) {
             if (song.getSongName().equalsIgnoreCase(songName) && 
                 song.getArtistName().equalsIgnoreCase(artistName)) {
                 return true;

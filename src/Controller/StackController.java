@@ -4,37 +4,37 @@
  */
 package Controller;
 
-import Model.RecentlyPlayedStack;
-import Model.Song;
+import Model.StackModel;
+import Model.SongModel;
 import java.util.ArrayList;
 /**
  *
  * @author Abhyudaya Shrestha
  */
-public class RecentlyPlayedController {
-        private RecentlyPlayedStack recentlyPlayedStack;
+public class StackController {
+        private StackModel recentlyPlayedStack;
     
     // Validation result class
     public class StackResult {
         public boolean success;
         public String message;
-        public Song song;
+        public SongModel song;
         
-        public StackResult(boolean success, String message, Song song) {
+        public StackResult(boolean success, String message, SongModel song) {
             this.success = success;
             this.message = message;
             this.song = song;
         }
     }
     
-    public RecentlyPlayedController() {
-        this.recentlyPlayedStack = new RecentlyPlayedStack();
+    public StackController() {
+        this.recentlyPlayedStack = new StackModel();
     }
     
     /**
      * Add song to recently played stack
      */
-    public StackResult addPlayedSong(Song song) {
+    public StackResult addPlayedSong(SongModel song) {
         if (song == null) {
             return new StackResult(false, "Invalid song!", null);
         }
@@ -49,7 +49,7 @@ public class RecentlyPlayedController {
     /**
      * Get most recently played song (PEEK)
      */
-    public Song getMostRecentSong() {
+    public SongModel getMostRecentSong() {
         return recentlyPlayedStack.peek();
     }
     
@@ -61,14 +61,14 @@ public class RecentlyPlayedController {
             return new StackResult(false, "Recently played list is empty!", null);
         }
         
-        Song removedSong = recentlyPlayedStack.pop();
+        SongModel removedSong = recentlyPlayedStack.pop();
         return new StackResult(true, "Removed from recently played", removedSong);
     }
     
     /**
      * Get all recently played songs
      */
-    public ArrayList<Song> getRecentlyPlayedSongs() {
+    public ArrayList<SongModel> getRecentlyPlayedSongs() {
         return recentlyPlayedStack.getAllSongs();
     }
     
@@ -111,7 +111,7 @@ public class RecentlyPlayedController {
     /**
      * Search for song in recently played
      */
-    public boolean isSongInRecentlyPlayed(Song song) {
+    public boolean isSongInRecentlyPlayed(SongModel song) {
         return recentlyPlayedStack.containsSong(song);
     }
 }

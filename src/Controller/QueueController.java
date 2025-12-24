@@ -6,24 +6,24 @@ package Controller;
 
 
 
-import Model.Song;
-import Model.SongQueue;
+import Model.SongModel;
+import Model.QueueModel;
 import java.util.ArrayList;
-import Model.RecentlyPlayedStack;
+import Model.StackModel;
 /**
  *
  * @author Abhyudaya Shrestha
  */
 public class QueueController {
-    private SongQueue songQueue;
+    private QueueModel songQueue;
     
     // Validation result class
     public class QueueResult {
         public boolean success;
         public String message;
-        public Song song;
+        public SongModel song;
         
-        public QueueResult(boolean success, String message, Song song) {
+        public QueueResult(boolean success, String message, SongModel song) {
             this.success = success;
             this.message = message;
             this.song = song;
@@ -31,13 +31,13 @@ public class QueueController {
     }
     
     public QueueController() {
-        this.songQueue = new SongQueue();   
+        this.songQueue = new QueueModel();   
     }
     
     /**
      * Add song to end of queue with validation
      */
-    public QueueResult addToQueue(Song song) {
+    public QueueResult addToQueue(SongModel song) {
         if (song == null) {
             return new QueueResult(false, "Invalid song!", null);
         }
@@ -57,7 +57,7 @@ public class QueueController {
     /**
      * Get currently playing song
      */
-    public Song getCurrentSong() {
+    public SongModel getCurrentSong() {
         return songQueue.getCurrentlyPlaying();
     }
     
@@ -69,7 +69,7 @@ public class QueueController {
             return new QueueResult(false, "The queue is empty!", null);
         }
         
-        Song nextSong = songQueue.playNext();
+        SongModel nextSong = songQueue.playNext();
         
         if (nextSong != null) {
             return new QueueResult(true, "Now Playing", nextSong);
@@ -81,14 +81,14 @@ public class QueueController {
     /**
      * Peek at next song without removing it
      */
-    public Song peekNextSong() {
+    public SongModel peekNextSong() {
         return songQueue.peekNext();
     }
     
     /**
      * Get all songs in queue as list
      */
-    public ArrayList<Song> getQueueList() {
+    public ArrayList<SongModel> getQueueList() {
         return songQueue.getAllSongs();
     }
     
