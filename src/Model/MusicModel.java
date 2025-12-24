@@ -12,43 +12,67 @@ import java.util.HashMap;
  */
 public class MusicModel {
     private HashMap<String, String> adminAccount;
-    private static ArrayList<Song> songs = new ArrayList<>();
+    private HashMap<String, String> userAccount;
+ 
+    ArrayList<Song> songs ;
     
     
+    public MusicModel(){
+        songs = new ArrayList<>();
+        adminAccount = new HashMap<>();
+        userAccount = new HashMap<>();
+        AdminUsers();
+        RegularUsers();
+    }
     
-    
-    
-    
-    public void SongsForToday(){
-        
-        songs.add(new Song("Bohemian Rhapsody", "Queen", "Rock", "A Night at the Opera", 1975));
-        songs.add(new Song("Cant tell me nothing", "Kanye West", "Rap", "Graduation", 2007));
-        songs.add(new Song("Last Christmas", "Wham", "Synth-pop", "Last Christmas", 1984));
-        songs.add(new Song("Let Down", "RadioHead", "Rock", "OK Computer", 1997));
-        songs.add(new Song("Country Roads", "John Denver", "Country", "Poems, Prayers and Promises", 1971));
+    public void addSongs(Song s) {
+        songs.add(s);
         
     }
-      public static ArrayList<Song> getSongs() {
+    
+    
+      public ArrayList<Song> getSongs() {
         return songs;
     }
       
+      
+      
+      
+      
+     
+      
      public void AdminUsers(){
          adminAccount = new HashMap<>();
-         adminAccount.put("Abhyudaya", "sybaunihga");
-         adminAccount.put("Dken10", "bigahhdih");
-     
-     
+         adminAccount.put("Abhyudaya", "abhyudaya");
+         adminAccount.put("Dken10", "abhyudaya");
      }
+         
+    // Initialize regular user accounts
+    public void RegularUsers(){
+        userAccount.put("user1", "abhyudaya");
+        userAccount.put("user2", "abhyudaya");
+ 
+    }
      
      public boolean isValidAdmin(String username, String password) {
         return adminAccount.containsKey(username) &&
                adminAccount.get(username).equals(password);
     }
 
+     public boolean isValidUser(String username, String password){
+         return userAccount.containsKey(username) &&
+                 userAccount.get(username).equals(password);
+     
+     
+    }
+     public void addUser(String username, String password) {
+        userAccount.put(username, password);
+    }
 
-
-
-
+     public boolean usernameExists(String username) {
+        return adminAccount.containsKey(username) || 
+        userAccount.containsKey(username);
+    }
 
 }
 
