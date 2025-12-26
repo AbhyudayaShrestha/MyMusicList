@@ -4,128 +4,135 @@
  */
 package Controller;
 
-
-
 import Model.SongModel;
 import Model.QueueModel;
 import java.util.ArrayList;
-import Model.StackModel;
+import java.util.HashMap;
 /**
  *
  * @author Abhyudaya Shrestha
  */
+
+//Handles queue operations using queue model
 public class QueueController {
     private QueueModel songQueue;
-    
-    // Validation result class
-    public class QueueResult {
-        public boolean success;
-        public String message;
-        public SongModel song;
-        
-        public QueueResult(boolean success, String message, SongModel song) {
-            this.success = success;
-            this.message = message;
-            this.song = song;
-        }
-    }
     
     public QueueController() {
         this.songQueue = new QueueModel();   
     }
     
-    /**
-     * Add song to end of queue with validation
-     */
-    public QueueResult addToQueue(SongModel song) {
+    
+    //Add song to end of queue with validation
+    
+    public HashMap<String, Object> addToQueue(SongModel song) {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (song == null) {
-            return new QueueResult(false, "Invalid song!", null);
+            result.put("success", false);
+            result.put("message", "Invalid song!");
+            result.put("song", null);
+            return result;
         }
         
         if (songQueue.isFull()) {
-            return new QueueResult(false, "The queue is full! Maximum " + 
-                                 songQueue.getMaxSize() + " songs allowed.", null);
+            result.put("success", false);
+            result.put("message", "The queue is full! Maximum " + songQueue.getMaxSize() + " songs allowed.");
+            result.put("song", null);
+            return result;
         }
         
         if (songQueue.addToQueue(song)) {
-            return new QueueResult(true, "Song added to queue!", song);
+            result.put("success", true);
+            result.put("message", "Song added to queue!");
+            result.put("song", song);
         } else {
-            return new QueueResult(false, "Failed to add song to queue!", null);
+            result.put("success", false);
+            result.put("message", "Failed to add song to queue!");
+            result.put("song", null);
         }
+        return result;
     }
     
-    /**
-     * Get currently playing song
-     */
+    
+    //Get currently playing song
+    
     public SongModel getCurrentSong() {
         return songQueue.getCurrentlyPlaying();
     }
     
-    /**
-     * Play next song (removes current and plays next in queue)
-     */
-    public QueueResult playNextSong() {
+    
+    //Play next song by removing current and playing next in queue)
+    
+    public HashMap<String, Object> playNextSong() {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (songQueue.isEmpty()) {
-            return new QueueResult(false, "The queue is empty!", null);
+            result.put("success", false);
+            result.put("message", "The queue is empty!");
+            result.put("song", null);
+            return result;
         }
         
         SongModel nextSong = songQueue.playNext();
         
         if (nextSong != null) {
-            return new QueueResult(true, "Now Playing", nextSong);
+            result.put("success", true);
+            result.put("message", "Now Playing");
+            result.put("song", nextSong);
         } else {
-            return new QueueResult(false, "No more songs in queue!", null);
+            result.put("success", false);
+            result.put("message", "No more songs in queue!");
+            result.put("song", null);
         }
+        return result;
     }
     
-    /**
-     * Peek at next song without removing it
-     */
+    
+    //Peek at next song without removing it
+    
     public SongModel peekNextSong() {
         return songQueue.peekNext();
     }
     
-    /**
-     * Get all songs in queue as list
-     */
+    
+    //Get all songs in queue as list
+    
     public ArrayList<SongModel> getQueueList() {
         return songQueue.getAllSongs();
     }
     
-    /**
-     * Get current queue size
-     */
+    
+    //Get current queue size
+    
     public int getQueueSize() {
         return songQueue.getSize();
     }
     
-    /**
-     * Get maximum queue capacity
-     */
+    
+    //Get maximum queue capacity
+    
     public int getMaxQueueSize() {
         return songQueue.getMaxSize();
     }
     
-    /**
-     * Check if queue is empty
-     */
+    
+    //Check if queue is empty
+    
     public boolean isQueueEmpty() {
         return songQueue.isEmpty();
     }
     
-    /**
-     * Check if queue is full
-     */
+    
+    //Check if queue is full
+    
     public boolean isQueueFull() {
         return songQueue.isFull();
     }
     
-    /**
-     * Clear the queue
-     */
+    
+    //Clear the queue
+    
     public void clearQueue() {
         songQueue.clear();
     }
 }
-    
-

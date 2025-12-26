@@ -12,6 +12,8 @@ import java.util.ArrayList;
  *
  * @author Abhyudaya Shrestha
  */
+
+//Manages CRUD operations and song queries using library model
 public class LibraryController {
     private LibraryModel library;
     
@@ -19,7 +21,7 @@ public class LibraryController {
         this.library = library;
     }
     
-    // CREATE
+    // Create 
     public boolean createSong(String songName, String artistName, String genre, 
                              String album, int releasedYear) {
         if (songName == null || songName.trim().isEmpty()) {
@@ -40,12 +42,14 @@ public class LibraryController {
         return library.addToLibrary(newSong);
     }
     
-    // READ
+    // Read
+    
     public ArrayList<SongModel> getAllSongs() {
         return library.getSongLibrary();
     }
     
-    // UPDATE
+    // Update
+    
     public boolean updateSong(int index, String songName, String artistName, 
                              String genre, String album, int releasedYear) {
         if (songName == null || songName.trim().isEmpty()) {
@@ -62,17 +66,17 @@ public class LibraryController {
         return library.updateLibrarySong(index, updatedSong);
     }
     
-    // DELETE
+    // Delete
     public boolean deleteSong(int index) {
         return library.deleteLibrarySong(index);
     }
     
-    // FIND
+    // Search
     public int findSongIndex(String songName) {
         return library.findLibrarySongIndex(songName);
     }
     
-    // GET
+    // Get
     public SongModel getSongAt(int index) {
         return library.getLibrarySongAt(index);
     }
@@ -81,7 +85,7 @@ public class LibraryController {
         return library.getLibrarySize();
     }
     
-    // LOAD DEMO SONGS
+    // loading pre set songs
     public void loadDemoSongs() {
         library.addToLibrary(new SongModel("Blinding Lights", "The Weeknd", "Synth-pop", "After Hours", 2019));
         library.addToLibrary(new SongModel("Shape of You", "Ed Sheeran", "Pop", "÷ (Divide)", 2017));
@@ -103,6 +107,11 @@ public class LibraryController {
         library.addToLibrary(new SongModel("Lose Yourself", "Eminem", "Hip Hop", "8 Mile Soundtrack", 2002));
         library.addToLibrary(new SongModel("HUMBLE.", "Kendrick Lamar", "Hip Hop", "DAMN.", 2017));
         library.addToLibrary(new SongModel("Sicko Mode", "Travis Scott", "Hip Hop", "Astroworld", 2018));
+        library.addToLibrary(new SongModel("Bohemian Rhapsody", "Queen", "Rock", "A Night at the Opera", 1975));
+        library.addToLibrary(new SongModel("Cant Tell Me Nothing", "Kanye West", "Rap", "Graduation", 2007));
+        library.addToLibrary(new SongModel("Last Christmas", "Wham", "Synth-pop", "Last Christmas", 1984));
+    library.addToLibrary(new SongModel("Let Down", "RadioHead", "Rock", "OK Computer", 1997));
+    library.addToLibrary(new SongModel("Country Roads", "John Denver", "Country", "Poems, Prayers and Promises", 1971));   
     }
     
 }

@@ -4,29 +4,20 @@
  */
 package Controller;
 
-import Model.UserSession;
+import Model.SessionModel;
 import java.util.HashMap;
 
 /**
  *
  * @author Abhyudaya Shrestha
  */
+
+//Manages user sessions and track of current users in the program
+
 public class SessionController {
-     private HashMap<String, UserSession> userSessions;
-    private UserSession currentSession;
+    private HashMap<String, SessionModel> userSessions;
+    private SessionModel currentSession;
     private String currentUsername;
-    
-    public class SessionResult {
-        public boolean success;
-        public String message;
-        public UserSession session;
-        
-        public SessionResult(boolean success, String message, UserSession session) {
-            this.success = success;
-            this.message = message;
-            this.session = session;
-        }
-    }
     
     public SessionController() {
         this.userSessions = new HashMap<>();
@@ -34,64 +25,80 @@ public class SessionController {
         this.currentUsername = "";
     }
     
-    /**
-     * Start a new session for a user
-     */
-    public SessionResult startSession(String username) {
+    
+    //Starts a new session for a user
+    
+    public HashMap<String, Object> startSession(String username) {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (username == null || username.trim().isEmpty()) {
-            return new SessionResult(false, "Invalid username", null);
+            result.put("success", false);
+            result.put("message", "Invalid username");
+            result.put("session", null);
+            return result;
         }
         
         // Get or create session
         if (!userSessions.containsKey(username)) {
-            userSessions.put(username, new UserSession(username));
+            userSessions.put(username, new SessionModel(username));
         }
         
         currentSession = userSessions.get(username);
         currentUsername = username;
         
-        return new SessionResult(true, "Session started for " + username, currentSession);
+        result.put("success", true);
+        result.put("message", "Session started for " + username);
+        result.put("session", currentSession);
+        return result;
     }
     
-    /**
-     * End current session
-     */
-    public SessionResult endSession() {
+    
+    //Ends current session
+    
+    public HashMap<String, Object> endSession() {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (currentSession == null) {
-            return new SessionResult(false, "No active session", null);
+            result.put("success", false);
+            result.put("message", "No active session");
+            result.put("session", null);
+            return result;
         }
         
         String username = currentUsername;
         currentSession = null;
         currentUsername = "";
         
-        return new SessionResult(true, "Session ended for " + username, null);
+        result.put("success", true);
+        result.put("message", "Session ended for " + username);
+        result.put("session", null);
+        return result;
     }
     
-    /**
-     * Get current active session
-     */
-    public UserSession getCurrentSession() {
+    
+    //Gets current active session
+    
+    public SessionModel getCurrentSession() {
         return currentSession;
     }
     
-    /**
-     * Get current username
-     */
+    
+    // Get current username
+    
     public String getCurrentUsername() {
         return currentUsername;
     }
     
-    /**
-     * Check if there's an active session
-     */
+    
+    //Check if there's an active session
+    
     public boolean hasActiveSession() {
         return currentSession != null;
     }
     
-    /**
-     * Get queue controller for current session
-     */
+    
+    //Get queue controller for current session
+    
     public QueueController getCurrentQueueController() {
         if (currentSession == null) {
             return null;
@@ -99,9 +106,9 @@ public class SessionController {
         return currentSession.getQueueController();
     }
     
-    /**
-     * Get stack controller for current session
-     */
+    
+    //Get stack controller for current session
+    
     public StackController getCurrentStackController() {
         if (currentSession == null) {
             return null;
@@ -109,4 +116,3 @@ public class SessionController {
         return currentSession.getRecentlyPlayedController();
     }
 }
-    

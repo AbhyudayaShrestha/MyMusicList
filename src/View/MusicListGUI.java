@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultListModel;
 
+import java.util.HashMap;
+
 
 
 /**
@@ -38,6 +40,7 @@ public class MusicListGUI extends javax.swing.JFrame {
 
     
     // Helper method to update admin table with songs
+    
     private void updateUserHomeTable() {
     DefaultTableModel model = (DefaultTableModel) userHomeTable.getModel();
     model.setRowCount(0);
@@ -59,7 +62,8 @@ public class MusicListGUI extends javax.swing.JFrame {
     model.addRow(new Object[]{"Let Down", "RadioHead", "Rock", "OK Computer", 1997});
     model.addRow(new Object[]{"Country Roads", "John Denver", "Country", "Poems, Prayers and Promises", 1971});
 }
-    // Update Admin Dashboard table (jTable2)
+    // Update Admin Dashboard table
+    
     private void updateAdminDashboard() {
         DefaultTableModel model = (DefaultTableModel) adminLibraryTable.getModel();
         model.setRowCount(0);
@@ -75,7 +79,8 @@ public class MusicListGUI extends javax.swing.JFrame {
         }
     }
 
-// Update User Library table (jTable1)
+    // Update User Library table
+    
     private void updateUserLibraryTable() {
         DefaultTableModel model = (DefaultTableModel) userLibraryTable.getModel();
         model.setRowCount(0);
@@ -93,34 +98,33 @@ public class MusicListGUI extends javax.swing.JFrame {
     
   
 
-        
-    
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MusicListGUI.class.getName());
 
-    /**
-     * Creates new form NewJFrame
-     */
+    
     public MusicListGUI() {
         initComponents();
-        // Create models
+        
+    // Create models
+        
     userModel = new UserModel();
     songLibrary = new LibraryModel();
     
     // Create controllers
+    
     authController = new AuthenticationController(userModel);
     libraryController = new LibraryController(songLibrary);
     playlistController = new PlaylistController(songLibrary);
     sessionController = new SessionController();
     
     // Load demo songs
+    
     libraryController.loadDemoSongs();
         
       
     }
-        // ============ CRUD METHODS ============
 
-// CREATE - Add new song
+
+    //Create
+    
     private void addNewSong() {
     javax.swing.JTextField songNameField = new javax.swing.JTextField();
     javax.swing.JTextField artistField = new javax.swing.JTextField();
@@ -136,44 +140,56 @@ public class MusicListGUI extends javax.swing.JFrame {
         "Released Year:", yearField
     };
     
-    int option = JOptionPane.showConfirmDialog(this, message, "Add New Song", 
-                                               JOptionPane.OK_CANCEL_OPTION);
+    int option = JOptionPane.showConfirmDialog(this, message, "Add New Song", JOptionPane.OK_CANCEL_OPTION);
     
     if (option == JOptionPane.OK_OPTION) {
-        try {
+        
             String songName = songNameField.getText().trim();
             String artist = artistField.getText().trim();
             String genre = genreField.getText().trim();
             String album = albumField.getText().trim();
-            int year = Integer.parseInt(yearField.getText().trim());
+            String yearText = yearField.getText().trim();
             
+            if (songName.isEmpty() || artist.isEmpty() || genre.isEmpty() || album.isEmpty() || yearText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "All fields are required!", "Validation Error", 
+            JOptionPane.WARNING_MESSAGE);
+            return;
+            }
+            
+            try {
+                int year = Integer.parseInt(yearText);
+                if (year < 1900 || year > 2025) {
+                    JOptionPane.showMessageDialog(this,"Released year must be between 1900 and 2025.", 
+                    "Invalid Released Year",JOptionPane.ERROR_MESSAGE);
+               return;
+            }
+                       
             if (libraryController.createSong(songName, artist, genre, album, year)) {
-                JOptionPane.showMessageDialog(this, "Song added successfully!", 
-                                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Song added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateAdminDashboard();
-                updateUserLibraryTable();  // Sync to user view
+                updateUserLibraryTable(); 
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to add song. Check if it already exists.", 
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to add song. Check if it already exists.", "Error", 
+                JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid year format!", 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid year format!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-}
 
-// UPDATE - Edit selected song
-private void updateSelectedSong() {
-    int selectedRow = adminLibraryTable.getSelectedRow();
+    // Update
     
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a song to update!", 
-                                    "No Selection", JOptionPane.WARNING_MESSAGE);
+    private void updateSelectedSong() {
+        int selectedRow = adminLibraryTable.getSelectedRow();
+    
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a song to update!", "No Selection", JOptionPane.WARNING_MESSAGE);
         return;
     }
     
     // Get current values
+    
     SongModel currentSong = libraryController.getSongAt(selectedRow);
     
     javax.swing.JTextField songNameField = new javax.swing.JTextField(currentSong.getSongName());
@@ -190,8 +206,7 @@ private void updateSelectedSong() {
         "Released Year:", yearField
     };
     
-    int option = JOptionPane.showConfirmDialog(this, message, "Update Song", 
-                                               JOptionPane.OK_CANCEL_OPTION);
+    int option = JOptionPane.showConfirmDialog(this, message, "Update Song", JOptionPane.OK_CANCEL_OPTION);
     
     if (option == JOptionPane.OK_OPTION) {
         try {
@@ -202,211 +217,220 @@ private void updateSelectedSong() {
             int year = Integer.parseInt(yearField.getText().trim());
             
             if (libraryController.updateSong(selectedRow, songName, artist, genre, album, year)) {
-                JOptionPane.showMessageDialog(this, "Song updated successfully!", 
-                                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Song updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateAdminDashboard();
-                updateUserLibraryTable();  // Sync to user view
+                updateUserLibraryTable();
             } else {
-                JOptionPane.showMessageDialog(this, "Failed to update song!", 
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to update song!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid year format!", 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Invalid year format!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-}
 
-// DELETE - Remove selected song
-private void deleteSelectedSong() {
-    int selectedRow = adminLibraryTable.getSelectedRow();
+    // Delete
     
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a song to delete!", 
-                                    "No Selection", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+    private void deleteSelectedSong() {
+        int selectedRow = adminLibraryTable.getSelectedRow();
     
-    SongModel song = libraryController.getSongAt(selectedRow);
-    int confirm = JOptionPane.showConfirmDialog(this, 
-        "Are you sure you want to delete:\n" + song.getSongName() + " by " + song.getArtistName() + "?",
-        "Confirm Delete", JOptionPane.YES_NO_OPTION);
-    
-    if (confirm == JOptionPane.YES_OPTION) {
-        if (libraryController.deleteSong(selectedRow)) {
-            JOptionPane.showMessageDialog(this, "Song deleted successfully!", 
-                                        "Success", JOptionPane.INFORMATION_MESSAGE);
-            updateAdminDashboard();
-            updateUserLibraryTable();  // Sync to user view
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to delete song!", 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a song to delete!", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }
-}   // Update the user's playlist table
-private void updateUserPlaylistTable() {
-    if (!sessionController.hasActiveSession()) return;
     
-    DefaultTableModel model = (DefaultTableModel) userPlaylistTable.getModel();
-    model.setRowCount(0);
-
-    // Get data via controller
-    ArrayList<SongModel> playlist = 
-        playlistController.getUserPlaylist(sessionController.getCurrentUsername());
-    
-    for (SongModel s : playlist) {
-        model.addRow(new Object[]{
-            s.getSongName(),
-            s.getArtistName(),
-            s.getGenre(),
-            s.getAlbum(),
-            s.getReleasedYear()
-        });
-    }
-
-}
-
-// Add song from library to user's playlist by typing song name
-private void addSongToPlaylist() {
-    if (!sessionController.hasActiveSession()) {
-        JOptionPane.showMessageDialog(this, "Please login first!", 
-            "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    String songName = JOptionPane.showInputDialog(this, 
-        "Enter the song name to add to your playlist:", 
-        "Add Song", 
-        JOptionPane.QUESTION_MESSAGE);
-    
-    if (songName == null || songName.trim().isEmpty()) {
-        return;
-    }
-    
-    // Use controller instead of direct model access
-    PlaylistController.PlaylistResult result = 
-        playlistController.addSongToPlaylist(
-            sessionController.getCurrentUsername(), 
-            songName.trim());
-    
-    if (result.success) {
-        JOptionPane.showMessageDialog(this, result.message, 
-            "Success", JOptionPane.INFORMATION_MESSAGE);
-        updateUserPlaylistTable();
-    } else {
-        JOptionPane.showMessageDialog(this, result.message, 
-            "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-// Remove song from user's playlist by typing song name
-private void removeSongFromPlaylist() {
-    if (!sessionController.hasActiveSession()) {
-        JOptionPane.showMessageDialog(this, "Please login first!", 
-            "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    String songName = JOptionPane.showInputDialog(this, 
-        "Enter the song name to remove from your playlist:", 
-        "Remove Song", 
-        JOptionPane.QUESTION_MESSAGE);
-    
-    if (songName == null || songName.trim().isEmpty()) {
-        return;
-    }
-    
-    // Use controller instead of direct model access
-    PlaylistController.PlaylistResult result = 
-        playlistController.removeSongFromPlaylist(
-            sessionController.getCurrentUsername(), 
-            songName.trim());
-    
-    if (result.success && result.song != null) {
+        SongModel song = libraryController.getSongAt(selectedRow);
         int confirm = JOptionPane.showConfirmDialog(this, 
-            "Remove '" + result.song.getSongName() + "' by " + 
-            result.song.getArtistName() + " from your playlist?",
-            "Confirm Remove", 
-            JOptionPane.YES_NO_OPTION);
-        
+            "Are you sure you want to delete:\n" + song.getSongName() + " by " + song.getArtistName() + "?",
+            "Confirm Delete", JOptionPane.YES_NO_OPTION);
+    
         if (confirm == JOptionPane.YES_OPTION) {
-            JOptionPane.showMessageDialog(this, "Song removed from playlist!", 
-                "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (libraryController.deleteSong(selectedRow)) {
+                JOptionPane.showMessageDialog(this, "Song deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                updateAdminDashboard();
+                updateUserLibraryTable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to delete song!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }   
+
+    // Update the user's playlist table
+    
+    private void updateUserPlaylistTable() {
+        if (!sessionController.hasActiveSession()) return;
+    
+        DefaultTableModel model = (DefaultTableModel) userPlaylistTable.getModel();
+        model.setRowCount(0);
+
+        // Get data via controller
+    
+        ArrayList<SongModel> playlist = 
+            playlistController.getUserPlaylist(sessionController.getCurrentUsername());
+    
+        for (SongModel s : playlist) {
+            model.addRow(new Object[]{
+                s.getSongName(),
+                s.getArtistName(),
+                s.getGenre(),
+                s.getAlbum(),
+                s.getReleasedYear()
+            });
+        }
+
+    }
+
+    // Add song from library to user's playlist by typing song name
+    
+    private void addSongToPlaylist() {
+        if (!sessionController.hasActiveSession()) {
+            JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+        String songName = null;
+        try {
+        songName = JOptionPane.showInputDialog(this, "Enter the song name to add to your playlist:", "Add Song", 
+                JOptionPane.QUESTION_MESSAGE);
+    
+            if (songName == null) {
+            return; 
+            }
+
+            if (songName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Song name cannot be empty!");
+            }
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+    
+        // Use controller instead of direct model access
+        
+        HashMap<String, Object> result = 
+        playlistController.addSongToPlaylist(
+        sessionController.getCurrentUsername(), 
+        songName.trim());
+
+        boolean success = (boolean) result.get("success");
+        String message = (String) result.get("message");
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
             updateUserPlaylistTable();
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, result.message, 
-            "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-/**
- * Update the queue JList display
- */
-private void updateQueueList() {
-    if (!sessionController.hasActiveSession()) return;
-    
-    QueueController queueCtrl = sessionController.getCurrentQueueController();
-    if (queueCtrl == null) return;
-    
-    DefaultListModel<String> listModel = new DefaultListModel<>();
-    
-    ArrayList<SongModel> queueSongs = queueCtrl.getQueueList();
-    SongModel currentSong = queueCtrl.getCurrentSong();
-    
-    // Show currently playing song
-    if (currentSong != null) {
-        listModel.addElement("♪ NOW PLAYING: " + currentSong.getSongName() + " - " + currentSong.getArtistName());
-    }
-    
-    // Show queue info
-    listModel.addElement("Queue: " + queueCtrl.getQueueSize() + "/" + queueCtrl.getMaxQueueSize() + " songs");
-    
-    // Show queue
-    if (queueSongs.isEmpty()) {
-        listModel.addElement("Queue is empty");
-    } else {
-        int position = 1;
-        for (SongModel song : queueSongs) {
-            listModel.addElement(position + ". " + song.getSongName() + " - " + song.getArtistName());
-            position++;
+        } else {
+            JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
-    userQueuedList.setModel(listModel);
-}
-/**
- * Update the Recently Played JList display
- */
-private void updateRecentlyPlayedList() {
-    if (!sessionController.hasActiveSession()) return;
+    // Remove song from user's playlist by typing song name
     
-    StackController stackCtrl = sessionController.getCurrentStackController();
-    if (stackCtrl == null) return;
+    private void removeSongFromPlaylist() {
+        if (!sessionController.hasActiveSession()) {
+            JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+        }
     
-    DefaultListModel<String> listModel = new DefaultListModel<>();
+        String songName = JOptionPane.showInputDialog(this, "Enter the song name to remove from your playlist:", "Remove Song", 
+        JOptionPane.QUESTION_MESSAGE);
     
-    ArrayList<SongModel> recentSongs = stackCtrl.getRecentlyPlayedSongs();
+        if (songName == null || songName.trim().isEmpty()) {
+            return;
+        }
     
-    // Show header
-    listModel.addElement("═══ Recently Played Stack ═══");
-    listModel.addElement("Total: " + stackCtrl.getRecentlyPlayedCount() + 
-                        "/" + stackCtrl.getMaxCapacity() + " songs");
-    listModel.addElement(""); // Empty line
+        // Use controller instead of direct model access
+        
+        HashMap<String, Object> result = 
+        playlistController.removeSongFromPlaylist(
+        sessionController.getCurrentUsername(), 
+        songName.trim());
+
+        boolean success = (boolean) result.get("success");
+        String message = (String) result.get("message");
+        SongModel song = (SongModel) result.get("song");
+
+        if (success && song != null) {
+            int confirm = JOptionPane.showConfirmDialog(this, "Remove '" + song.getSongName() + "' by " + 
+            song.getArtistName() + " from your playlist?", "Confirm Remove", JOptionPane.YES_NO_OPTION);
     
-    // Show songs (most recent first)
-    if (recentSongs.isEmpty()) {
-        listModel.addElement("No songs played yet");
-    } else {
-        int position = 1;
-        for (SongModel song : recentSongs) {
-            listModel.addElement(position + ". " + song.getSongName() + 
-                               " - " + song.getArtistName());
-            position++;
+            if (confirm == JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(this, "Song removed from playlist!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                updateUserPlaylistTable();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    //Update the queue JList display
+
+    private void updateQueueList() {
+        if (!sessionController.hasActiveSession()) return;
     
-    userRecentlyPlayedTable.setModel(listModel);
-}
+        QueueController queueCtrl = sessionController.getCurrentQueueController();
+        if (queueCtrl == null) return;
+    
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        
+        ArrayList<SongModel> queueSongs = queueCtrl.getQueueList();
+        SongModel currentSong = queueCtrl.getCurrentSong();
+    
+        // Show currently playing song
+        
+        if (currentSong != null) {
+            listModel.addElement("NOW PLAYING: " + currentSong.getSongName() + " - " + currentSong.getArtistName());
+        }
+    
+        // Show queue info
+        
+        listModel.addElement("Queue: " + queueCtrl.getQueueSize() + "/" + queueCtrl.getMaxQueueSize() + " songs");
+    
+        // Show queue
+        
+        if (queueSongs.isEmpty()) {
+            listModel.addElement("Queue is empty");
+        } else {
+            int position = 1;
+            for (SongModel song : queueSongs) {
+                listModel.addElement(position + ". " + song.getSongName() + " - " + song.getArtistName());
+                position++;
+            }
+        }
+    
+        userQueuedList.setModel(listModel);
+    }
+
+    //Update the Recently Played JList display
+
+    private void updateRecentlyPlayedList() {
+        if (!sessionController.hasActiveSession()) return;
+    
+        StackController stackCtrl = sessionController.getCurrentStackController();
+        if (stackCtrl == null) return;
+    
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+    
+        ArrayList<SongModel> recentSongs = stackCtrl.getRecentlyPlayedSongs();
+    
+        // Show header
+        
+        listModel.addElement("Recently Played Stack");
+        listModel.addElement("Total: " + stackCtrl.getRecentlyPlayedCount() + "/" + stackCtrl.getMaxCapacity() + " songs");
+        listModel.addElement("");
+    
+        // Show songs 
+        
+        if (recentSongs.isEmpty()) {
+            listModel.addElement("No songs played yet");
+        } else {
+            int position = 1;
+            for (SongModel song : recentSongs) {
+                listModel.addElement(position + ". " + song.getSongName() + " - " + song.getArtistName());
+                position++;
+            }
+        }
+    
+        userRecentlyPlayedTable.setModel(listModel);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -895,7 +919,7 @@ private void updateRecentlyPlayedList() {
                 .addComponent(userSongsStackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(userLogOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(645, Short.MAX_VALUE))
         );
 
         userPanel.add(userButtonsPanel, java.awt.BorderLayout.LINE_START);
@@ -1208,16 +1232,46 @@ private void updateRecentlyPlayedList() {
         userCardPanel.add(userQueuedSongsPanel, "card5");
 
         userRecentlyPlayedPanel.setBackground(java.awt.SystemColor.inactiveCaption);
+        userRecentlyPlayedPanel.setLayout(new java.awt.GridBagLayout());
 
         userRecentlyPlayedTitleLabel.setFont(new java.awt.Font("Times New Roman", 0, 36)); // NOI18N
         userRecentlyPlayedTitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userRecentlyPlayedTitleLabel.setText("Recenty Played Songs");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.ipadx = 88;
+        gridBagConstraints.ipady = 76;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        userRecentlyPlayedPanel.add(userRecentlyPlayedTitleLabel, gridBagConstraints);
 
+        userRecentlyPlayedTable.setPreferredSize(new java.awt.Dimension(200, 200));
         userRecentlyPlayedScrollPane.setViewportView(userRecentlyPlayedTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 400;
+        gridBagConstraints.ipady = 351;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 56, 179, 0);
+        userRecentlyPlayedPanel.add(userRecentlyPlayedScrollPane, gridBagConstraints);
 
         userRecentlyPlayedSubTitleLabel.setFont(new java.awt.Font("Times New Roman", 3, 24)); // NOI18N
         userRecentlyPlayedSubTitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userRecentlyPlayedSubTitleLabel.setText("Take a look at the songs you just played");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 1, 0, 0);
+        userRecentlyPlayedPanel.add(userRecentlyPlayedSubTitleLabel, gridBagConstraints);
 
         userRecentlyPlayedLastPlayedButton.setBackground(java.awt.SystemColor.scrollbar);
         userRecentlyPlayedLastPlayedButton.setText("Last Played Song");
@@ -1226,41 +1280,14 @@ private void updateRecentlyPlayedList() {
                 userRecentlyPlayedLastPlayedButtonActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout userRecentlyPlayedPanelLayout = new javax.swing.GroupLayout(userRecentlyPlayedPanel);
-        userRecentlyPlayedPanel.setLayout(userRecentlyPlayedPanelLayout);
-        userRecentlyPlayedPanelLayout.setHorizontalGroup(
-            userRecentlyPlayedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                .addGroup(userRecentlyPlayedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                        .addGap(124, 124, 124)
-                        .addComponent(userRecentlyPlayedScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 681, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                        .addGroup(userRecentlyPlayedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(userRecentlyPlayedTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(userRecentlyPlayedSubTitleLabel)))
-                        .addGap(251, 251, 251)
-                        .addComponent(userRecentlyPlayedLastPlayedButton, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(182, Short.MAX_VALUE))
-        );
-        userRecentlyPlayedPanelLayout.setVerticalGroup(
-            userRecentlyPlayedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                .addGroup(userRecentlyPlayedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(userRecentlyPlayedPanelLayout.createSequentialGroup()
-                        .addComponent(userRecentlyPlayedTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(userRecentlyPlayedSubTitleLabel)
-                        .addGap(6, 6, 6))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userRecentlyPlayedPanelLayout.createSequentialGroup()
-                        .addComponent(userRecentlyPlayedLastPlayedButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(userRecentlyPlayedScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(180, 180, 180))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 24;
+        gridBagConstraints.ipady = 27;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 12, 0, 163);
+        userRecentlyPlayedPanel.add(userRecentlyPlayedLastPlayedButton, gridBagConstraints);
 
         userCardPanel.add(userRecentlyPlayedPanel, "card6");
 
@@ -1562,21 +1589,22 @@ private void updateRecentlyPlayedList() {
        String username = loginBoxUsernameField.getText().trim();
     String password = new String(loginBoxPasswordField.getPassword()).trim();
     
-    AuthenticationController adminController = new AuthenticationController(userModel);
     
     // Try admin login first
-    AuthenticationController.ValidationResult result = authController.validateLogin(username, password, true);
     
-    if (result.success) {
-        // Start session via controller
-        sessionController.startSession(username);
-        
-        JOptionPane.showMessageDialog(this, result.message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    HashMap<String, Object> result = authController.validateLogin(username, password, true);
+    boolean success = (boolean) result.get("success");
+    String message = (String) result.get("message");
+
+        if (success) {
+            sessionController.startSession(username);
+            JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
         
         // Update welcome label with username
         adminHomeWelcomeLabel.setText("Welcome Back, " + username + "!");
         
-        // Admin login successful - switch to Admin panel
+        // Admin login successful
+        
         CardLayout main = (CardLayout) mainPanel.getLayout();
         main.show(mainPanel, "card5");
         
@@ -1584,18 +1612,18 @@ private void updateRecentlyPlayedList() {
         updateAdminDashboard();
         
         // Clear fields
-        loginBoxUsernameField.setText("");
-        loginBoxPasswordField.setText("");
-    } else {
-        // Admin login failed, try user login
-        result = authController.validateLogin(username, password, false);
         
-        if (result.success) {
-            // Start session via controller
+        loginBoxUsernameField.setText("");
+        loginBoxPasswordField.setText(""); 
+        } else {
+    // Admin login failed, try user login
+        HashMap<String, Object> userResult = authController.validateLogin(username, password, false);
+        boolean userSuccess = (boolean) userResult.get("success");
+        String userMessage = (String) userResult.get("message");
+    
+        if (userSuccess) {
             sessionController.startSession(username);
-            
-            JOptionPane.showMessageDialog(this, result.message, "Success", JOptionPane.INFORMATION_MESSAGE);
-            
+            JOptionPane.showMessageDialog(this, userMessage, "Success", JOptionPane.INFORMATION_MESSAGE);
             // Update welcome label with username
             userHomeWelcomeLabel.setText("Welcome Back, " + username + "!");
             
@@ -1610,15 +1638,10 @@ private void updateRecentlyPlayedList() {
             loginBoxUsernameField.setText("");
             loginBoxPasswordField.setText("");
         } else {
-            // Both failed - show error
-            JOptionPane.showMessageDialog(this, result.message, "Login Failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, userMessage, "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-
-
     }//GEN-LAST:event_loginBoxLoginButtonActionPerformed
-
+    }
     private void loginBoxUsernameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBoxUsernameFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_loginBoxUsernameFieldActionPerformed
@@ -1638,27 +1661,26 @@ private void updateRecentlyPlayedList() {
 
     private void registerBoxRegisterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBoxRegisterButtonActionPerformed
 
-    String username = registerBoxUsernameField.getText().trim();
-    String password = new String(registerBoxPasswordField.getPassword()).trim();
+        String username = registerBoxUsernameField.getText().trim();
+        String password = new String(registerBoxPasswordField.getPassword()).trim();
     
-    // Register as regular user
-    AuthenticationController.ValidationResult result = authController.registerUser(username, password);
+        // Register as regular user
     
-    if (result.success) {
-        // Show success message in VIEW
-        JOptionPane.showMessageDialog(this, result.message, "Registration Success", JOptionPane.INFORMATION_MESSAGE);
+        HashMap<String, Object> result = authController.registerUser(username, password);
+        boolean success = (boolean) result.get("success");
+        String message = (String) result.get("message");
+
+        if (success) {
+            JOptionPane.showMessageDialog(this, message, "Registration Success", JOptionPane.INFORMATION_MESSAGE);       
         
-        // Clear fields
-        registerBoxUsernameField.setText("");
-        registerBoxPasswordField.setText("");
-        
-        // Navigate back to login
-        CardLayout main = (CardLayout) mainPanel.getLayout();
-        main.show(mainPanel, "LoginCard");
-    } else {
-        // Show error in VIEW
-        JOptionPane.showMessageDialog(this, result.message, "Registration Error", JOptionPane.ERROR_MESSAGE);
-    }
+            registerBoxUsernameField.setText("");
+            registerBoxPasswordField.setText("");
+                       
+            CardLayout main = (CardLayout) mainPanel.getLayout();
+            main.show(mainPanel, "LoginCard");
+        } else {       
+            JOptionPane.showMessageDialog(this, message, "Registration Error", JOptionPane.ERROR_MESSAGE);
+        }
     // TODO add your handling code here:
     }//GEN-LAST:event_registerBoxRegisterButtonActionPerformed
 
@@ -1675,21 +1697,14 @@ private void updateRecentlyPlayedList() {
 
     private void userLogOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userLogOutButtonActionPerformed
 
-    int choice = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to log out?",
-        "Confirm Logout",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
+        int choice = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Confirm Logout",JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE);
     
-    if (choice == JOptionPane.YES_OPTION) {
-        // End session via controller
-        sessionController.endSession();
-        
-        CardLayout main = (CardLayout) mainPanel.getLayout();
-        main.show(mainPanel, "LoginCard");
-    }
+        if (choice == JOptionPane.YES_OPTION) {
+            sessionController.endSession();        
+            CardLayout main = (CardLayout) mainPanel.getLayout();
+            main.show(mainPanel, "LoginCard");
+        }
     }//GEN-LAST:event_userLogOutButtonActionPerformed
 
     private void userHomeTableComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_userHomeTableComponentAdded
@@ -1711,21 +1726,17 @@ private void updateRecentlyPlayedList() {
 
     private void LogOutAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogOutAdminActionPerformed
 
-    int choice = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to log out?",
-        "Confirm Logout",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-    );
+        int choice = JOptionPane.showConfirmDialog(this, "Are you sure you want to log out?", "Confirm Logout", JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE);
     
-    if (choice == JOptionPane.YES_OPTION) {
-        // End session via controller
-        sessionController.endSession();
+        if (choice == JOptionPane.YES_OPTION) {
         
-        CardLayout main = (CardLayout) mainPanel.getLayout();
-        main.show(mainPanel, "LoginCard");
-    }
+        // End session via controller
+        
+            sessionController.endSession();
+            CardLayout main = (CardLayout) mainPanel.getLayout();
+            main.show(mainPanel, "LoginCard");
+        }
     }//GEN-LAST:event_LogOutAdminActionPerformed
 
     private void adminLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminLibraryButtonActionPerformed
@@ -1743,7 +1754,7 @@ private void updateRecentlyPlayedList() {
     private void userLibraryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userLibraryButtonActionPerformed
         CardLayout infoLayout = (CardLayout) userCardPanel.getLayout();
         infoLayout.show(userCardPanel, "UserLibraryCard");
-    // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_userLibraryButtonActionPerformed
 
     private void adminLibraryAddSongButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminLibraryAddSongButtonActionPerformed
@@ -1768,9 +1779,9 @@ private void updateRecentlyPlayedList() {
 
     private void userSongsQueueButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userSongsQueueButtonActionPerformed
 
-            CardLayout infoLayout = (CardLayout) userCardPanel.getLayout();
-            infoLayout.show(userCardPanel, "card5");
-            updateQueueList();  // TODO add your handling code here:
+        CardLayout infoLayout = (CardLayout) userCardPanel.getLayout();
+        infoLayout.show(userCardPanel, "card5");
+        updateQueueList();  // TODO add your handling code here:
     }//GEN-LAST:event_userSongsQueueButtonActionPerformed
 
     private void userQueuedAddToQueueButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userQueuedAddToQueueButtonActionPerformed
@@ -1791,18 +1802,27 @@ private void updateRecentlyPlayedList() {
         return;
     }
     
-    String songName = JOptionPane.showInputDialog(this, 
-        "Enter the song name to add to queue:", 
-        "Add to Queue", 
-        JOptionPane.QUESTION_MESSAGE);
-    
-    if (songName == null || songName.trim().isEmpty()) {
+    String songName = null;
+
+    try {
+        songName = JOptionPane.showInputDialog(this, "Enter the song name to add to queue:", "Add to Queue", JOptionPane.QUESTION_MESSAGE);
+
+        if (songName == null) {
+            return;
+        }
+
+        if (songName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Song name cannot be empty!");
+        }
+    } catch (IllegalArgumentException e) {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Invalid Input", JOptionPane.WARNING_MESSAGE);
         return;
     }
-    
+
     songName = songName.trim();
     
     // Find song in library
+    
     SongModel foundSong = null;
     for (SongModel song : library) {
         if (song.getSongName().equalsIgnoreCase(songName)) {
@@ -1813,71 +1833,62 @@ private void updateRecentlyPlayedList() {
     
     if (foundSong == null) {
         JOptionPane.showMessageDialog(this, 
-            "Song '" + songName + "' not found in Music Library!", 
-            "Not Found", 
-            JOptionPane.ERROR_MESSAGE);
+            "Song '" + songName + "' not found in Music Library!", "Not Found", JOptionPane.ERROR_MESSAGE);
         return;
     }
     
     // Add to queue with validation using session controller
-    QueueController queueCtrl = sessionController.getCurrentQueueController();
-    QueueController.QueueResult result = queueCtrl.addToQueue(foundSong);
     
-    if (result.success) {
-        JOptionPane.showMessageDialog(this, 
-            "'" + foundSong.getSongName() + "' by " + foundSong.getArtistName() + 
-            " added to queue!", 
-            "Success", 
-            JOptionPane.INFORMATION_MESSAGE);
+    QueueController queueCtrl = sessionController.getCurrentQueueController();
+    HashMap<String, Object> result = queueCtrl.addToQueue(foundSong);
+    boolean success = (boolean) result.get("success");
+    String message = (String) result.get("message");
+
+    if (success) {
+        JOptionPane.showMessageDialog(this, "'" + foundSong.getSongName() + "' by " + foundSong.getArtistName() + " added to queue!", "Success", 
+        JOptionPane.INFORMATION_MESSAGE);
         updateQueueList();
     } else {
-        JOptionPane.showMessageDialog(this, 
-            result.message, 
-            "Error", 
-            JOptionPane.ERROR_MESSAGE);
-    }         // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_userQueuedAddToQueueButtonActionPerformed
 
     private void userQueuedPlayNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userQueuedPlayNextButtonActionPerformed
 
     if (!sessionController.hasActiveSession()) {
-        JOptionPane.showMessageDialog(this, "Please login first!", 
-            "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
     
-    QueueController queueCtrl = sessionController.getCurrentQueueController();
-    StackController stackCtrl = sessionController.getCurrentStackController();
-    
-    QueueController.QueueResult result = queueCtrl.playNextSong();
-    
-    if (result.success) {
-        stackCtrl.addPlayedSong(result.song);
-        JOptionPane.showMessageDialog(this, 
-            "Now Playing:\n" + result.song.getSongName() + " by " + result.song.getArtistName(), 
-            "Playing Next", 
+        QueueController queueCtrl = sessionController.getCurrentQueueController();
+        StackController stackCtrl = sessionController.getCurrentStackController();
+
+        HashMap<String, Object> result = queueCtrl.playNextSong();
+        boolean success = (boolean) result.get("success");
+        String message = (String) result.get("message");
+        SongModel song = (SongModel) result.get("song");
+
+        if (success) {
+            stackCtrl.addPlayedSong(song);
+            JOptionPane.showMessageDialog(this, "Now Playing:\n" + song.getSongName() + " by " + song.getArtistName(), "Playing Next", 
             JOptionPane.INFORMATION_MESSAGE);
-        updateQueueList();
-        updateRecentlyPlayedList();
-    } else {
-        JOptionPane.showMessageDialog(this, 
-            result.message, 
-            "Queue Empty", 
-            JOptionPane.WARNING_MESSAGE);
-        updateQueueList();
-    }
+            updateQueueList();
+            updateRecentlyPlayedList();
+        } else {
+            JOptionPane.showMessageDialog(this, message, "Queue Empty", JOptionPane.WARNING_MESSAGE);
+            updateQueueList();
+        }
     }//GEN-LAST:event_userQueuedPlayNextButtonActionPerformed
 
     private void userSongsStackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userSongsStackButtonActionPerformed
         CardLayout infoLayout = (CardLayout) userCardPanel.getLayout();
-    infoLayout.show(userCardPanel, "card6");
-    updateRecentlyPlayedList();
+        infoLayout.show(userCardPanel, "card6");
+        updateRecentlyPlayedList();
     }//GEN-LAST:event_userSongsStackButtonActionPerformed
 
     private void userRecentlyPlayedLastPlayedButtonActionPerformed(java.awt.event.ActionEvent evt) {                                          
     if (!sessionController.hasActiveSession()) {
-        JOptionPane.showMessageDialog(this, "Please login first!", 
-            "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Please login first!", "Error", JOptionPane.ERROR_MESSAGE);
         return;
     }
     
@@ -1885,25 +1896,20 @@ private void updateRecentlyPlayedList() {
     SongModel lastSong = stackCtrl.getMostRecentSong();
     
     if (lastSong == null) {
-        JOptionPane.showMessageDialog(this, 
-            "No songs have been played yet!", 
-            "Recently Played Empty", 
-            JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "No songs have been played yet!", "Recently Played Empty", JOptionPane.INFORMATION_MESSAGE);
         return;
     }
     
     // Display all song details in a formatted message
-    String songDetails = "LAST PLAYED SONG\n" +
-                        "Song Name: " + lastSong.getSongName() + "\n" +
+    String songDetails = """
+                         LAST PLAYED SONG
+                         Song Name: """ + lastSong.getSongName() + "\n" +
                         "Artist: " + lastSong.getArtistName() + "\n" +
                         "Genre: " + lastSong.getGenre() + "\n" +
                         "Album: " + lastSong.getAlbum() + "\n" +
                         "Released Year: " + lastSong.getReleasedYear();
     
-    JOptionPane.showMessageDialog(this, 
-        songDetails, 
-        "Last Played Song Details", 
-        JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(this, songDetails, "Last Played Song Details", JOptionPane.INFORMATION_MESSAGE);
 }               
 
     /**
@@ -1923,7 +1929,7 @@ private void updateRecentlyPlayedList() {
                 }
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         //</editor-fold>
 

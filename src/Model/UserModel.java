@@ -11,23 +11,26 @@ import java.util.HashMap;
  * @author Abhyudaya Shrestha
  */
 
+//Using hash map to store pre defined user and admin accounts
 public class UserModel {
     private HashMap<String, String> adminAccounts;
     private HashMap<String, String> userAccounts;
-    
+
+//Constructor initializing the defined hash maps. Also a method to pre load accounts defined.  
     public UserModel() {
         adminAccounts = new HashMap<>();
         userAccounts = new HashMap<>();
         initializeDefaultAccounts();
     }
-    
+//storing key value pair in Hash map    
     private void initializeDefaultAccounts() {
         adminAccounts.put("Abhyudaya", "abhyudaya");
         adminAccounts.put("Dken10", "abhyudaya");
         userAccounts.put("user1", "abhyudaya");
         userAccounts.put("user2", "abhyudaya");
     }
-    
+
+//checking for if account exists along with password matching or not.    
     public boolean isValidAdmin(String username, String password) {
         return adminAccounts.containsKey(username) &&
                adminAccounts.get(username).equals(password);
@@ -37,14 +40,18 @@ public class UserModel {
         return userAccounts.containsKey(username) &&
                userAccounts.get(username).equals(password);
     }
-    
+
+// registring for new Account    
     public void addUser(String username, String password) {
         userAccounts.put(username, password);
     }
-    
+
+//checks if account aldredy exists    
     public boolean usernameExists(String username) {
         return adminAccounts.containsKey(username) || 
                userAccounts.containsKey(username);
     }
+    
 }
+
 

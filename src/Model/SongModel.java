@@ -8,60 +8,63 @@ package Model;
  *
  * @author Abhyudaya Shrestha
  */
-public class SongModel{
+//Data containers
+public class SongModel {
     
-    protected String SongName;
-    protected String ArtistName;
-    protected String Genre;
-    protected String Album;
-    protected int ReleasedYear;
-
+    protected String songName;
+    protected String artistName;
+    protected String genre;
+    protected String album;
+    protected int releasedYear;
+    
+//Constructor initializes declared variables
     public SongModel(String SongName, String ArtistName, String Genre, String Album, int ReleasedYear) {
-        this.SongName = SongName;
-        this.ArtistName = ArtistName;
-        this.Genre = Genre;
-        this.Album = Album;
-        this.ReleasedYear = ReleasedYear;
+        this.songName = SongName;
+        this.artistName = ArtistName;
+        this.genre = Genre;
+        this.album = Album;
+        this.releasedYear = ReleasedYear;
     }
 
+ //getters and setters   
     public String getSongName() {
-        return SongName;
+        return songName;
     }
 
     public void setSongName(String SongName) {
-        this.SongName = SongName;
+        this.songName = SongName;
     }
 
     public String getArtistName() {
-        return ArtistName;
+        return artistName;
     }
 
     public void setArtistName(String ArtistName) {
-        this.ArtistName = ArtistName;
+        this.artistName = ArtistName;
     }
 
     public String getGenre() {
-        return Genre;
+        return genre;
     }
 
     public void setGenre(String Genre) {
-        this.Genre = Genre;
+        this.genre = Genre;
     }
 
     public String getAlbum() {
-        return Album;
+        return album;
     }
 
     public void setAlbum(String Album) {
-        this.Album = Album;
+        this.album = Album;
     }
 
     public int getReleasedYear() {
-        return ReleasedYear;
+        return releasedYear;
     }
 
     public void setReleasedYear(int ReleasedYear) {
-        this.ReleasedYear = ReleasedYear;
+        this.releasedYear = ReleasedYear;
     }
     
     

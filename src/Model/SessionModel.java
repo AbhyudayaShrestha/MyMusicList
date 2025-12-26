@@ -11,12 +11,14 @@ import Controller.StackController;
  *
  * @author Abhyudaya Shrestha
  */
-public class UserSession {
+
+//Created to store personal data of queue and recently played for each user
+public class SessionModel {
     private String username;
     private QueueController queueController;
     private StackController recentlyPlayedController;
     
-    public UserSession(String username) {
+    public SessionModel(String username) {
         this.username = username;
         this.queueController = new QueueController();
         this.recentlyPlayedController = new StackController();

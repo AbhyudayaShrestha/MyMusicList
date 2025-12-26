@@ -6,78 +6,111 @@ package Controller;
 
 
 import Model.UserModel;
+import java.util.HashMap;
 
 
 /**
  *
  * @author Abhyudaya Shrestha
  */
+
+//Handles login and registration logic by communicating with UserModel
+
 public class AuthenticationController{
 
     private UserModel userModel;
     
-    public class ValidationResult {
-        public boolean success;
-        public String message;
-        public boolean isAdmin;
-        
-        public ValidationResult(boolean success, String message, boolean isAdmin) {
-            this.success = success;
-            this.message = message;
-            this.isAdmin = isAdmin;
-        }
-    }
-    
     public AuthenticationController(UserModel userModel) {
         this.userModel = userModel;
     }
+
+    //Validates log in details and credentials
     
-    public ValidationResult validateLogin(String username, String password, boolean isAdminLogin) {
+    public HashMap<String, Object> validateLogin(String username, String password, boolean isAdminLogin) {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (username == null || username.isEmpty()) {
-            return new ValidationResult(false, "Username cannot be empty", false);
+            result.put("success", false);
+            result.put("message", "Username cannot be empty");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (password == null || password.isEmpty()) {
-            return new ValidationResult(false, "Password cannot be empty", false);
+            result.put("success", false);
+            result.put("message", "Password cannot be empty");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (password.length() < 6) {
-            return new ValidationResult(false, "Password must be at least 6 characters long", false);
+            result.put("success", false);
+            result.put("message", "Password must be at least 6 characters long");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (isAdminLogin) {
             if (userModel.isValidAdmin(username, password)) {
-                return new ValidationResult(true, "Admin Login Successful", true);
+                result.put("success", true);
+                result.put("message", "Admin Login Successful");
+                result.put("isAdmin", true);
             } else {
-                return new ValidationResult(false, "Invalid credentials", false);
+                result.put("success", false);
+                result.put("message", "Invalid username or password");
+                result.put("isAdmin", false);
             }
         } else {
             if (userModel.isValidUser(username, password)) {
-                return new ValidationResult(true, "User Login Successful", false);
+                result.put("success", true);
+                result.put("message", "User Login Successful");
+                result.put("isAdmin", false);
             } else {
-                return new ValidationResult(false, "Invalid credentials", false);
+                result.put("success", false);
+                result.put("message", "Invalid username or password");
+                result.put("isAdmin", false);
             }
         }
+        return result;
     }
     
-    public ValidationResult registerUser(String username, String password) {
+    //Validate registration details
+    
+    public HashMap<String, Object> registerUser(String username, String password) {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (username == null || username.isEmpty()) {
-            return new ValidationResult(false, "Username cannot be empty", false);
+            result.put("success", false);
+            result.put("message", "Username cannot be empty");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (password == null || password.isEmpty()) {
-            return new ValidationResult(false, "Password cannot be empty", false);
+            result.put("success", false);
+            result.put("message", "Password cannot be empty");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (password.length() < 6) {
-            return new ValidationResult(false, "Password must be at least 6 characters long", false);
+            result.put("success", false);
+            result.put("message", "Password must be at least 6 characters long");
+            result.put("isAdmin", false);
+            return result;
         }
         
         if (userModel.usernameExists(username)) {
-            return new ValidationResult(false, "Username already exists. Please choose another.", false);
+            result.put("success", false);
+            result.put("message", "Username already exists. Please choose another.");
+            result.put("isAdmin", false);
+            return result;
         }
         
         userModel.addUser(username, password);
-        return new ValidationResult(true, "User account created successfully", false);
+        result.put("success", true);
+        result.put("message", "User account created successfully");
+        result.put("isAdmin", false);
+        return result;
     }
 }

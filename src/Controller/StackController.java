@@ -7,110 +7,124 @@ package Controller;
 import Model.StackModel;
 import Model.SongModel;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  *
  * @author Abhyudaya Shrestha
  */
+
+//Manages stack operations using stack model
+
 public class StackController {
         private StackModel recentlyPlayedStack;
-    
-    // Validation result class
-    public class StackResult {
-        public boolean success;
-        public String message;
-        public SongModel song;
-        
-        public StackResult(boolean success, String message, SongModel song) {
-            this.success = success;
-            this.message = message;
-            this.song = song;
-        }
-    }
     
     public StackController() {
         this.recentlyPlayedStack = new StackModel();
     }
     
-    /**
-     * Add song to recently played stack
-     */
-    public StackResult addPlayedSong(SongModel song) {
+    
+    //Add song to recently played stack
+    
+    public HashMap<String, Object> addPlayedSong(SongModel song) {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (song == null) {
-            return new StackResult(false, "Invalid song!", null);
+            result.put("success", false);
+            result.put("message", "Invalid song!");
+            result.put("song", null);
+            return result;
         }
         
         if (recentlyPlayedStack.addSongNoDuplicates(song)) {
-            return new StackResult(true, "Song added to recently played!", song);
+            result.put("success", true);
+            result.put("message", "Song added to recently played!");
+            result.put("song", song);
         } else {
-            return new StackResult(false, "Failed to add song!", null);
+            result.put("success", false);
+            result.put("message", "Failed to add song!");
+            result.put("song", null);
         }
+        return result;
     }
     
-    /**
-     * Get most recently played song (PEEK)
-     */
+    
+    //Get most recently played song
+    
     public SongModel getMostRecentSong() {
         return recentlyPlayedStack.peek();
     }
     
-    /**
-     * Remove most recent song (POP)
-     */
-    public StackResult removeMostRecentSong() {
+    
+    //Remove most recent song 
+    
+    public HashMap<String, Object> removeMostRecentSong() {
+        HashMap<String, Object> result = new HashMap<>();
+        
         if (recentlyPlayedStack.isEmpty()) {
-            return new StackResult(false, "Recently played list is empty!", null);
+            result.put("success", false);
+            result.put("message", "Recently played list is empty!");
+            result.put("song", null);
+            return result;
         }
         
         SongModel removedSong = recentlyPlayedStack.pop();
-        return new StackResult(true, "Removed from recently played", removedSong);
+        result.put("success", true);
+        result.put("message", "Removed from recently played");
+        result.put("song", removedSong);
+        return result;
     }
     
-    /**
-     * Get all recently played songs
-     */
+    
+    //Get all recently played songs
+    
     public ArrayList<SongModel> getRecentlyPlayedSongs() {
         return recentlyPlayedStack.getAllSongs();
     }
     
-    /**
-     * Get recently played count
-     */
+    
+    //Get recently played count
+    
     public int getRecentlyPlayedCount() {
         return recentlyPlayedStack.getSize();
     }
     
-    /**
-     * Get maximum capacity
-     */
+    
+    //Get maximum capacity
+    
     public int getMaxCapacity() {
         return recentlyPlayedStack.getMaxSize();
     }
     
-    /**
-     * Check if recently played is empty
-     */
+    
+    //Check if recently played is empty
+    
     public boolean isRecentlyPlayedEmpty() {
         return recentlyPlayedStack.isEmpty();
     }
     
-    /**
-     * Check if recently played is full
-     */
+    
+    //Check if recently played is full
+    
     public boolean isRecentlyPlayedFull() {
         return recentlyPlayedStack.isFull();
     }
     
-    /**
-     * Clear all recently played songs
-     */
-    public StackResult clearRecentlyPlayed() {
+    
+    //Clear all recently played songs
+    
+    public HashMap<String, Object> clearRecentlyPlayed() {
+        HashMap<String, Object> result = new HashMap<>();
         recentlyPlayedStack.clear();
-        return new StackResult(true, "Recently played list cleared!", null);
+        result.put("success", true);
+        result.put("message", "Recently played list cleared!");
+        result.put("song", null);
+        return result;
     }
     
-    /**
-     * Search for song in recently played
-     */
+    
+    //Search for song in recently played
+    
     public boolean isSongInRecentlyPlayed(SongModel song) {
         return recentlyPlayedStack.containsSong(song);
     }

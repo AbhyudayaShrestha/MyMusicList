@@ -10,62 +10,69 @@ import java.util.ArrayList;
  *
  * @author Abhyudaya Shrestha
  */
+
+//Queue based of on Arraylist
 public class QueueModel {
-    private final int SIZE = 10;  // Maximum queue size
+    private final int queueSize = 10;
     private SongModel[] queue;
     private int front;
     private int rear;
     private SongModel currentlyPlaying;
-    
+
+    //constructor for initialization    
     public QueueModel() {
-        this.queue = new SongModel[SIZE];
+        this.queue = new SongModel[queueSize];
         this.front = -1;
         this.rear = -1;
         this.currentlyPlaying = null;
     }
     
-    /**
-     * Add song to the end of queue
-     * Returns true if successful, false if queue is full
-     */
+
+     //Add song to the end of queue
+     //Provides boolean value true if it was done otherwise false since queue would be full
+    
     public boolean addToQueue(SongModel song) {
-        if (rear == SIZE - 1) {
-            return false;  // Queue is full
-        } else {
-            if (front == -1) {
-                front = 0;  // First element
-            }
-            rear++;
-            queue[rear] = song;
-            return true;
+            try {
+                if (isFull()) {
+                return false;  
+                } else {
+                if (front == -1) {
+                    front = 0; 
+                }
+                rear++;
+                queue[rear] = song;
+                return true;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Queue array index out of bounds: " + e.getMessage());
+            return false;
         }
-    }
+    }   
     
-    /**
-     * Check if queue is full
-     */
+     //Check if queue is full
+    
     public boolean isFull() {
-        return rear == SIZE - 1;
+        return rear == queueSize - 1;
     }
     
-    /**
-     * Check if queue is empty
-     */
+    
+     //Check if queue is empty
+    
     public boolean isEmpty() {
         return front == -1 || front > rear;
     }
     
-    /**
-     * Get currently playing song
-     */
+    
+     //Get currently playing song
+    
     public SongModel getCurrentlyPlaying() {
         return currentlyPlaying;
     }
     
-    /**
-     * Play next song - removes current song and plays next in queue
-     * Returns the next song, or null if queue is empty
-     */
+    
+     //Play next song by removing current song and plays next in queue
+     //Returns the next song or null if queue is mpty
+    
     public SongModel playNext() {
         if (front > rear || front == -1) {
             // Queue is empty
@@ -80,9 +87,9 @@ public class QueueModel {
         }
     }
     
-    /**
-     * Peek at next song without removing it
-     */
+    
+    //Checking out the next song
+    
     public SongModel peekNext() {
         if (front == -1 || front > rear) {
             return null;
@@ -90,27 +97,11 @@ public class QueueModel {
         return queue[front];
     }
     
-    /**
-     * Get all songs in queue as ArrayList for display
-     */
-    public ArrayList<SongModel> getQueueAsList() {
-        ArrayList<SongModel> list = new ArrayList<>();
-        
-        if (front == -1 || front > rear) {
-            return list;  // Empty list
-        }
-        
-        for (int i = front; i <= rear; i++) {
-            if (queue[i] != null) {
-                list.add(queue[i]);
-            }
-        }
-        return list;
-    }
     
-    /**
-     * Get current queue size (number of songs waiting)
-     */
+    
+    
+    //Get current queue queueSize
+     
     public int getSize() {
         if (front == -1 || front > rear) {
             return 0;
@@ -118,39 +109,37 @@ public class QueueModel {
         return (rear - front + 1);
     }
     
-    /**
-     * Get maximum queue capacity
-     */
+    //Max queue queueSize
+    
     public int getMaxSize() {
-        return SIZE;
+        return queueSize;
     }
     
-    /**
-     * Clear the entire queue
-     */
+    //Clear queue
+    
     public void clear() {
-        queue = new SongModel[SIZE];
+        queue = new SongModel[queueSize];
         front = -1;
         rear = -1;
         currentlyPlaying = null;
     }
-    /**
- * Get all songs in queue as ArrayList for display
- */
-public ArrayList<SongModel> getAllSongs() {
+
+    //Get all songs in queue as ArrayList to display it
+    
+    public ArrayList<SongModel> getAllSongs() {
     ArrayList<SongModel> list = new ArrayList<>();
     
-    if (front == -1 || front > rear) {
-        return list;  // Empty list
-    }
-    
-    for (int i = front; i <= rear; i++) {
-        if (queue[i] != null) {
-            list.add(queue[i]);
+        if (front == -1 || front > rear) {
+            return list;  // Empty list
         }
+    
+        for (int i = front; i <= rear; i++) {
+            if (queue[i] != null) {
+                list.add(queue[i]);
+            }
+        }
+        return list;
     }
-    return list;
-}
 }
     
     
